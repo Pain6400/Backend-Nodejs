@@ -1,16 +1,19 @@
 {
-  "name": "kevinapp",
+  "name": "backend-nodejs",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon index",
-    "start": "node index"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Pain6400/Backend-Nodejs.git"
+  },
+  "author": "kevin",
   "license": "ISC",
-  "dependencies": {
-    "express": "^4.18.1",
-    "nodemon": "^2.0.19"
-  }
+  "bugs": {
+    "url": "https://github.com/Pain6400/Backend-Nodejs/issues"
+  },
+  "homepage": "https://github.com/Pain6400/Backend-Nodejs#readme"
 }
