@@ -1,9 +1,17 @@
 import express from 'express';
 import { login, register } from '../controllers/auth.controller.js';
 import { body } from 'express-validator';
+import { validationResultExpress } from '../middlewares/validationResultExpress.js';
 const router = express.Router();
 
-router.get('/login', login);
+router.get('/login', [
+    body('email', "Formato incorrecto")
+    .trim()
+    .isEmail()
+    .normalizeEmail()
+], 
+validationResultExpress,
+login);
 
 router.post('/register', [
     body('email', "Formato incorrecto")
@@ -21,7 +29,9 @@ router.post('/register', [
 
             return value;
         })
-], register)
+], 
+validationResultExpress,
+register)
 
 
 export default router;
