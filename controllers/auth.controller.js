@@ -1,4 +1,5 @@
 import { User } from "../models/User.js";
+import jwt from "jsonwebtoken";
 
 export const register = async (req, res) => {
     const { email, password } = req.body;
@@ -30,8 +31,9 @@ export const login = async (req, res) => {
 
         if(!respuestaPassword) return res.status(403).json({ status: false, message: "Contraseña incorrecta"});
 
+        const token = jwt.sign({uid: user._id}, process.env.JWT_SECRET);
 
-        return res.json({ strtus:true, message: "Usuario logeado correctamente"});
+        return res.json({ strtus:true, message: "Usuario logeado correctamente", token: token});
 
     } catch (error) {
         console.log(error)
