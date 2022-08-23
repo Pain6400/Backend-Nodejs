@@ -28,6 +28,11 @@ userShema.pre("save", async function(next) {
         console.log(error);
         throw new Error("Fallo el hash de contraseña")
     }
-})
+});
+
+
+userShema.methods.comparePassrowd = async function(candidatePassword) {
+    return await bcryptjs.compare(candidatePassword, this.password);
+}
 
 export const User = mongoose.model('User', userShema);
