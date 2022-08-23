@@ -1,5 +1,6 @@
 import { User } from "../models/User.js";
-import jwt from "jsonwebtoken";
+
+import { generateToken } from "../utils/generateToken.js";
 
 export const register = async (req, res) => {
     const { email, password } = req.body;
@@ -31,12 +32,22 @@ export const login = async (req, res) => {
 
         if(!respuestaPassword) return res.status(403).json({ status: false, message: "Contraseña incorrecta"});
 
-        const token = jwt.sign({uid: user._id}, process.env.JWT_SECRET);
+        const token = generateToken(user.id)
 
         return res.json({ strtus:true, message: "Usuario logeado correctamente", token: token});
 
     } catch (error) {
         console.log(error)
+        return res.status(500).json({status: false, message: "Error de servidor"})
+    }
+}
+
+
+export const infoUser = async(req, res) => {
+    try {
+        const  { _id , email } = await User.findById(req.uid).lean();
+        return res.json({ email, _id })
+    } catch (error) {
         return res.status(500).json({status: false, message: "Error de servidor"})
     }
 }
