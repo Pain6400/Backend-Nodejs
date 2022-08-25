@@ -1,6 +1,8 @@
+import { generateRefreshToken } from "../middlewares/requireToken.js";
 import { User } from "../models/User.js";
+import jwt from "jsonwebtoken";
 
-import { generateToken } from "../utils/generateToken.js";
+import { generateToken } from "../utils/tokenManager.js";
 
 export const register = async (req, res) => {
     const { email, password } = req.body;
@@ -34,7 +36,9 @@ export const login = async (req, res) => {
 
         const token = generateToken(user.id)
 
-        return res.json({ strtus:true, message: "Usuario logeado correctamente", token: token});
+        generateRefreshToken(res, user.uid);
+
+        return res.json({ strtus:true, message: "Usuario logeado correctamente", tokenInfo: token});
 
     } catch (error) {
         console.log(error)
@@ -49,5 +53,18 @@ export const infoUser = async(req, res) => {
         return res.json({ email, _id })
     } catch (error) {
         return res.status(500).json({status: false, message: "Error de servidor"})
+    }
+}
+
+export const refreshToken = (req, res) => {
+    try {
+        const refreshTokenCookie = req.cookies.refreshToken;
+        if(!refreshTokenCookie) throw new Error("No existe el token");
+        const { uid } = jwt.verify(refreshTokenCookie, process.env.JWT_REFRESH)
+
+        const tokenInfo = generateToken(uid);
+        return res.json({ status:true, message: "Usuario logeado correctamente", tokenInfo: tokenInfo});
+    } catch (error) {
+        return res.status(401).json({status: false, message: error.message})
     }
 }
