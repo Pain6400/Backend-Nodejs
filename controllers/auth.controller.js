@@ -1,8 +1,7 @@
-import { generateRefreshToken } from "../middlewares/requireToken.js";
 import { User } from "../models/User.js";
-import jwt from "jsonwebtoken";
 
-import { generateToken } from "../utils/tokenManager.js";
+
+import { generateToken, generateRefreshToken } from "../utils/tokenManager.js";
 
 export const register = async (req, res) => {
     const { email, password } = req.body;
@@ -58,13 +57,14 @@ export const infoUser = async(req, res) => {
 
 export const refreshToken = (req, res) => {
     try {
-        const refreshTokenCookie = req.cookies.refreshToken;
-        if(!refreshTokenCookie) throw new Error("No existe el token");
-        const { uid } = jwt.verify(refreshTokenCookie, process.env.JWT_REFRESH)
-
-        const tokenInfo = generateToken(uid);
+        const tokenInfo = generateToken(req.uid);
         return res.json({ status:true, message: "Usuario logeado correctamente", tokenInfo: tokenInfo});
     } catch (error) {
         return res.status(401).json({status: false, message: error.message})
     }
+}
+
+export const logout = (req, res) => {
+    res.clearCookie("refreshToken");
+    return res.json({ status:true, message: "Sesion cerrada correctamente"});
 }

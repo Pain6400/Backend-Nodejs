@@ -1,41 +1,18 @@
 import { Router } from 'express';
-import { infoUser, login, register, refreshToken } from '../controllers/auth.controller.js';
-import { body } from 'express-validator';
-import { validationResultExpress } from '../middlewares/validationResultExpress.js';
+import { infoUser, login, register, refreshToken, logout } from '../controllers/auth.controller.js';
 import { requireToken } from '../middlewares/requireToken.js';
+import { requireRefreshToken } from '../middlewares/requireRefreshToken.js';
+import { bodyLoginValidator, bodyRegisterValidator } from '../middlewares/validatorManager.js';
 const router = Router();
 
-router.get('/login', [
-    body('email', "Formato incorrecto")
-    .trim()
-    .isEmail()
-    .normalizeEmail()
-], 
-validationResultExpress,
-login);
+router.get('/login', bodyLoginValidator, login);
 
-router.post('/register', [
-    body('email', "Formato incorrecto")
-        .trim()
-        .isEmail()
-        .normalizeEmail(),
-    body("password", "Minimo 6 caracteres")        
-        .trim()
-        .isLength( { min: 6 }),
-    body("password", "Formato incorrecto")
-        .custom((value, {req}) => {
-            if(value !== req.body.repassword) {
-                throw new Error("La contraseñas no coinciden")
-            }
-
-            return value;
-        })
-], 
-validationResultExpress,
-register)
+router.post('/register', bodyRegisterValidator, register)
 
 router.get("/protected", requireToken, infoUser);
 
-router.get("/refreshToken", refreshToken)
+router.get("/refreshToken", requireRefreshToken, refreshToken);
+
+router.get("/logour", logout)
 
 export default router;
