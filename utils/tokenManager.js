@@ -9,8 +9,8 @@ export const generateToken = (uid) => {
     }
 }
 
-export const generateRefreshToken = (res, uid ) => {
-    const expiresIn = 60 * 60 * 23 * 30;
+export const generateRefreshToken = (uid, res) => {
+    const expiresIn = 60 * 60 * 24 * 30;
     try {
         const refreshToken = jwt.sign({ uid }, process.env.JWT_REFRESH, {
             expiresIn

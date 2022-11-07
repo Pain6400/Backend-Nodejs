@@ -1,13 +1,11 @@
 import { User } from "../models/User.js";
-
-
 import { generateToken, generateRefreshToken } from "../utils/tokenManager.js";
 
 export const register = async (req, res) => {
     const { email, password } = req.body;
-
+ 
     try {
-        let user = await User.findOne({email});
+        const user = await User.findOne({email});
         if(user) throw { code: 1100};
         user = new User({ email, password });
 
@@ -35,11 +33,11 @@ export const login = async (req, res) => {
 
         const token = generateToken(user.id)
 
-        generateRefreshToken(res, user.uid);
+        generateRefreshToken(user.uid, res);
 
         return res.json({ strtus:true, message: "Usuario logeado correctamente", tokenInfo: token});
 
-    } catch (error) {
+    } catch (error) { 
         console.log(error)
         return res.status(500).json({status: false, message: "Error de servidor"})
     }
@@ -57,7 +55,12 @@ export const infoUser = async(req, res) => {
 
 export const refreshToken = (req, res) => {
     try {
-        const tokenInfo = generateToken(req.uid);
+        const refreshTokenCookie = req.cookies.refreshToken;
+        if(!refreshTokenCookie) throw new Error("No existe el token");
+        const { uid } = jwt.verify(refreshTokenCookie, process.env.JWT_REFRESH);
+
+        const tokenInfo = generateToken(uid);
+
         return res.json({ status:true, message: "Usuario logeado correctamente", tokenInfo: tokenInfo});
     } catch (error) {
         return res.status(401).json({status: false, message: error.message})
