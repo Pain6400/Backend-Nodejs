@@ -5,10 +5,10 @@ export const register = async (req, res) => {
     const { email, password } = req.body;
  
     try {
-        const user = await User.findOne({email});
+        let user = await User.findOne({email});
         if(user) throw { code: 1100};
+        console.log("test")
         user = new User({ email, password });
-
         await user.save();
         return res.status(201).json({ status: true, message: "Usuario creado correctamente" });
     } catch (error) {
