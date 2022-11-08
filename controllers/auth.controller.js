@@ -55,17 +55,13 @@ export const infoUser = async(req, res) => {
 
 export const refreshToken = (req, res) => {
     try {
-        const refreshTokenCookie = req.cookies.refreshToken;
-        if(!refreshTokenCookie) throw new Error("No existe el token");
-        const { uid } = jwt.verify(refreshTokenCookie, process.env.JWT_REFRESH);
-
-        const tokenInfo = generateToken(uid);
-
-        return res.json({ status:true, message: "Usuario logeado correctamente", tokenInfo: tokenInfo});
+        const { token, expiresIn } = generateToken(req.uid);
+        return res.json({ token, expiresIn });
     } catch (error) {
-        return res.status(401).json({status: false, message: error.message})
+        console.log(error);
+        return res.status(500).json({status: false, message: "Error de servidor"})
     }
-}
+};
 
 export const logout = (req, res) => {
     res.clearCookie("refreshToken");
