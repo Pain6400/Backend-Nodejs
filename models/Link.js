@@ -14,10 +14,10 @@ const linkSchema = new Schema({
         unique: true
     },
     uid: {
-        type: Schema.Type.ObjectId,
+        type: Schema.Types.ObjectId,
         required: true,
         ref: "User"
     }
 });
 
-export const Link = model("Link", linkSchema)
+export const Link = model("Link", linkSchema);
