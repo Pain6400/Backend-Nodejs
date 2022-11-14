@@ -1,3 +1,4 @@
+import { nanoid } from "nanoid";
 import { Link } from "../models/Link.js";
 
 export const getLinks = async(req, res) => {
@@ -14,8 +15,11 @@ export const createLink = async (req, res) => {
     try {
         const { longLink } = req.body
 
-        return res.json({  longLink })
+        const link = new Link({ longLink, nanoLink: nanoid(6), uid: req.uid })
+        await link.save();
+
+        return res.status(201).json({ link })
     } catch (error) {
-        
+        return res.status(500).json({status: false, message: "Error de servidor"})
     }
 }

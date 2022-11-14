@@ -7,10 +7,14 @@ export const register = async (req, res) => {
     try {
         let user = await User.findOne({email});
         if(user) throw { code: 1100};
-        console.log("test")
         user = new User({ email, password });
         await user.save();
-        return res.status(201).json({ status: true, message: "Usuario creado correctamente" });
+
+        const token = generateToken(user.id)
+
+        generateRefreshToken(user.uid, res);
+
+        return res.status(201).json({ status: true, message: "Usuario creado correctamente", token });
     } catch (error) {
         if(error.code === 1100) {
             return res.status(400).json({status: false, message: "El correo ya existe"})

@@ -9,6 +9,14 @@ export const validationResultExpress = (req, res, next) => {
     next()
 }
 
+export const bodyLinkValidator = [
+    body("longLink", "Formato incorrecto")
+    .trim()
+    .notEmpty()
+    .exists(),
+    validationResultExpress
+];
+
 export const bodyRegisterValidator = [
     body('email', "Formato incorrecto")
         .trim()
