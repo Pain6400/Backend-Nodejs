@@ -10,8 +10,7 @@ const app = express();
 
 const whiteList = [
     process.env.ORIGIN1,
-    process.env.ORIGIN2,
-    undefined
+    process.env.ORIGIN2
 ];
 
 app.use(cors({
