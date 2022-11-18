@@ -65,3 +65,30 @@ export const removeLinkById = async (req, res) => {
         return res.status(500).json({status: false, message: error.message})
     }
 }
+
+export const updateLinkById = async (req, res) => {
+    try {
+        const { linkId } = req.params;
+        const { longLink } = req.body;
+        if(!longLink.startsWith('https://')) {
+            longLink = 'https://' + longLink;
+        }
+        const link = await Link.findById(linkId);
+
+        if(!link) return res.status(404).json({ status: false, message: "El link no existe"})
+        
+        if(!link.uid.equals(req.uid)) return res.status(401).json({ status: false, message: "No esta autorizado"});
+        
+        link.longLink = longLink;
+
+        await link.save();
+
+        return res.status(200).json({ status: true, message: "Link actualizadp correctamente"});
+    } catch (error) {
+        if(error.kind === "ObjectId") {
+            return res.status(403).json({status: false, message: "Formato incorrecto"})
+        }
+
+        return res.status(500).json({status: false, message: error.message})
+    }
+}
