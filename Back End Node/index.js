@@ -15,13 +15,13 @@ const whiteList = [
 
 app.use(cors({
     origin: function(origin, callback) {
-        console.log(whiteList)
-        if(whiteList.includes(origin)){
+        if(!origin || whiteList.includes(origin)){
             return callback(null, origin);
         }
 
         return callback("Error de CORS: " + origin + " No autorizado!");
-    }
+    },
+    credentials: true
 }));
 app.use(express.json());
 app.use(cookieParser());
