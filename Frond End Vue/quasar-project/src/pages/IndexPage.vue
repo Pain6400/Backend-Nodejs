@@ -11,7 +11,7 @@ import { api } from "src/boot/axios";
 import { ref } from "vue";
 
 const token = ref("");
-
+const expireIn = ref("");
 const access = async () => {
   try {
     const res = await api.post("/auth/login", {
@@ -19,6 +19,7 @@ const access = async () => {
       password: "123456",
     });
     token.value = res.data.tokenInfo.token;
+    expireIn.value = res.data.tokenInfo.expireIn;
   } catch (error) {
     console.log(error);
   }
@@ -47,9 +48,17 @@ const refreshToken = async () => {
   try {
     const res = await api.get("/auth/refreshToken");
     token.value = res.data.tokenInfo.token;
+    expireIn.value = res.data.tokenInfo.expireIn;
+    setTime();
   } catch (error) {
     console.log(error);
   }
+};
+
+const setTime = () => {
+  setTimeout(() => {
+    refreshToken();
+  }, expireIn.value * 1000 - 6000);
 };
 
 refreshToken();
